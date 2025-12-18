@@ -1,3 +1,5 @@
+# Taken from https://www.freecodecamp.org/news/how-to-work-with-environment-variables-in-python/
+
 import os
 
 class AppConfig:

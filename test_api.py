@@ -27,9 +27,25 @@ headers = {
         'Authorization': f'Token {t_api_key}'
 }
 
-requestResponse = requests.get(t_test_url,
-                               headers=headers)
+# Send test request to api
+# requestResponse = requests.get(t_test_url,
+#                               headers=headers)
 
+# VGT test URLs
+vgt_name="vgt"
+t_daily_url=f"https://api.tiingo.com/tiingo/daily/{vgt_name}/prices"
+
+# Build query param set
+query_parameters = {
+    "startDate": "2025-12-17",
+    "endDate": "2025-12-17",
+    "resampleFreq": "daily"
+}
+
+# Query given above header and params
+requestResponse = requests.get(t_daily_url, params=query_parameters, headers=headers)
+
+# Print the response out for validation
 print(requestResponse.json())
 
 

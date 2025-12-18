@@ -1,0 +1,8 @@
+Vanguard fund VGT: https://investor.vanguard.com/investment-products/etfs/profile/vgt#price
+
+Tiingo Docs: https://www.tiingo.com/documentation/end-of-day
+
+Tiingo Pricing: https://www.tiingo.com/account/billing/pricing
+
+REST Query Parameters: https://apipark.com/techblog/en/mastering-query-parameters-with-python-requests/
+

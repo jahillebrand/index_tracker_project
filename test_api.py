@@ -39,13 +39,23 @@ t_daily_url=f"https://api.tiingo.com/tiingo/daily/{vgt_name}/prices"
 query_parameters = {
     "startDate": "2025-12-17",
     "endDate": "2025-12-17",
-    "resampleFreq": "daily"
+    "resampleFreq": "daily",
+    "columns": "splitFactor,close,adjClose",
 }
 
 # Query given above header and params
 requestResponse = requests.get(t_daily_url, params=query_parameters, headers=headers)
+print(type(requestResponse))
+
+requestResponseJson = requestResponse.json()
+print(type(requestResponseJson))
+
+print(requestResponse.json())
+
+adjClose = requestResponseJson[0]["adjClose"]
 
 # Print the response out for validation
-print(requestResponse.json())
+
+print(adjClose)
 
 

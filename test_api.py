@@ -37,8 +37,8 @@ t_daily_url=f"https://api.tiingo.com/tiingo/daily/{vgt_name}/prices"
 
 # Build query param set
 query_parameters = {
-    "startDate": "2025-12-17",
-    "endDate": "2025-12-17",
+    "startDate": "2025-11-26",
+    "endDate": "2025-11-26",
     "resampleFreq": "daily",
     "columns": "splitFactor,close,adjClose",
 }

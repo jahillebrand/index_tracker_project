@@ -43,8 +43,9 @@ with open(csvFileName, mode='r')as file:
 for line in range(len(csvFileContents)):
     parsedSymbolList.append(csvFileContents[line].lower())
 
-# Max 37, failed on 22 at 19:19
-evalPosition=22
+# Max 37. This gets run manually currently
+# TODO: Make this run in a loop, which pauses every 20 symbols to allow API cooldown time
+evalPosition=37
 print(f"Now evaluating: {parsedSymbolList[evalPosition]}")
 
 # Create API key and generic symbol object

@@ -1,5 +1,7 @@
 import json
 
+from storedSymbolObj import storedSymbolObj
+
 import matplotlib.pyplot as plt
 
 # ChatGPT gave me this to make a png
@@ -51,6 +53,7 @@ def makeTablePng(dataList, outputPath):
 
 
 
+""" Old procedural logic, testing class logic below
 # Read the stored Json file
 with open('symbolDataFile.json', 'r') as file:
     testJsonData=json.load(file)
@@ -70,4 +73,9 @@ print(sortedTickerDataList)
 makeTablePng(
     dataList=sortedTickerDataList,
     outputPath="tenYearReturn.png"
-)
+) """
+
+testDataFilename="symbolDataFile.json"
+outputFilename="testTenYearReturn.png"
+testDataObj=storedSymbolObj(testDataFilename)
+testDataObj.makeTablePng(outputFilename)

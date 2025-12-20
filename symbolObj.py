@@ -21,7 +21,7 @@ class symbolObj:
         self.lastUpdatedAdjPrice=0.0
         self.tenYearReturn=0.0
         self.apiObj = apiObj
-        self.updateTenYear()
+        #self.updateTenYear()
 
     def updateTenYear(self):
         #Update new date

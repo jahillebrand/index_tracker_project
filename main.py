@@ -1,5 +1,6 @@
 from apiObj import apiObj
 from symbolObj import symbolObj
+from listOfSymbols import listOfSymbols
 
 import csv
 
@@ -34,12 +35,17 @@ parsedSymbolList=[]
 
 # Open csv file, read in names
 csvFileName='symbolsList.csv'
-with open(csvFileName, mode='r')as file:
+""" with open(csvFileName, mode='r')as file:
     csvFileHandler=csv.reader(file)
     for lines in csvFileHandler:
-        csvFileContents = csvFileContents+lines
+        csvFileContents = csvFileContents+lines """
 
-# Drop symbols to all lowercase
+## Left off here
+
+vanguardAdmFunds = listOfSymbols(csvFileName)
+print(vanguardAdmFunds.symbolNamesList)
+
+""" # Drop symbols to all lowercase
 for line in range(len(csvFileContents)):
     parsedSymbolList.append(csvFileContents[line].lower())
 
@@ -64,5 +70,5 @@ symbolDataToWrite = {
     "tenYearReturn" : str(genericSymbolObj.tenYearReturn),
 }
 
-write_json(symbolDataToWrite)
+write_json(symbolDataToWrite) """
 

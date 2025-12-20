@@ -7,8 +7,13 @@ from datetime import datetime, timedelta
 # Import REST API features
 import requests
 
+# Import time module to handle processing API limits
+import time
+
 class symbolObj:
     tenThousandDollars=10000
+    tooManyRequests=429
+    oneHourInSec=(60*60)
     
     def __init__(self, symbol, apiObj):
         self.symbol = symbol
@@ -33,7 +38,7 @@ class symbolObj:
         tenYearAdjClose=float(tenYearResponse.json()[0]["adjClose"])
 
         # Use close price differences to calculate 10 year return
-        self.tenYearReturn = self.tenThousandDollars*(self.lastUpdatedAdjPrice/tenYearAdjClose)
+        self.tenYearReturn = symbolObj.tenThousandDollars*(self.lastUpdatedAdjPrice/tenYearAdjClose)
 
     def sendRequest(self, requestDate):
         # Prepare Header Data
@@ -50,13 +55,47 @@ class symbolObj:
             "columns": "splitFactor,close,adjClose",
         }
 
-        # Query API
-        requestResponse = requests.get(
-            f"{self.apiObj.dailyUriBase}{self.symbol}{self.apiObj.dailyUriSuffix}",
-            params=query_parameters, 
-            headers=headers
-        )
-        
-        return requestResponse
+        # Attempt API query, pause, sleep and loop if needed
+        while True:
+            # Query API
+            requestResponse = requests.get(
+                f"{self.apiObj.dailyUriBase}{self.symbol}{self.apiObj.dailyUriSuffix}",
+                params=query_parameters, 
+                headers=headers
+            )
+
+            # Check for Request Limit Exceeded
+            if requestResponse.status_code == symbolObj.tooManyRequests:
+                # Number of seconds until retry
+                retryAfter = requestResponse.headers.get("Retry-After")
+
+                if retryAfter is not None:
+                    sleepSeconds = int(retryAfter)
+                else:
+                    sleepSeconds = symbolObj.oneHourInSec
+
+                self.sleepWithHeartbeat(sleepSeconds)
+                continue
+
+            requestResponse.raise_for_status()
+            return requestResponse
     
+    def sleepWithHeartbeat(totalSeconds, interval=30):
+        # Grab remaining seconds
+        remaining = totalSeconds
+
+        # Begin looping time printouts
+        while remaining > 0:
+            mins, secs = divmod(remaining, 60)
+            print(
+                f"\rRate limited — retrying in {mins:02d}:{secs:02d} ",
+                end="",
+                flush=True
+            )
+
+            sleepTime = min(interval, remaining)
+            time.sleep(sleepTime)
+            remaining -= sleepTime
+
+        print("\rRetrying now...            ")
     

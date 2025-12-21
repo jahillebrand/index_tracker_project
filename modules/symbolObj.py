@@ -10,6 +10,26 @@ import requests
 # Import time module to handle processing API limits
 import time
 
+def sleepWithHeartbeat(totalSeconds, interval=30):
+    # Grab remaining seconds
+    remaining = totalSeconds
+
+    # Begin looping time printouts
+    while remaining > 0:
+        mins, secs = divmod(remaining, 60)
+        print(
+            f"\rRate limited — retrying in {mins:02d}:{secs:02d} ",
+            end="",
+            flush=True
+        )
+
+        sleepTime = min(interval, remaining)
+        time.sleep(sleepTime)
+        remaining -= sleepTime
+
+    print("\rRetrying now...            ")
+
+
 class symbolObj:
     tenThousandDollars=10000
     tooManyRequests=429
@@ -45,7 +65,7 @@ class symbolObj:
         self.lastUpdatedAdjPrice = float(priorMonthResponse.json()[0]["adjClose"])
 
         # Make API call for 10 years prior
-        tenYearResponse=self.sendRequest(tenYearPriorDate)
+        tenYearResponse=self.sendRequest(tenYearPriorDate,apiObj)
         tenYearAdjClose=float(tenYearResponse.json()[0]["adjClose"])
 
         # Use close price differences to calculate 10 year return
@@ -86,28 +106,11 @@ class symbolObj:
                 else:
                     sleepSeconds = symbolObj.oneHourInSec
 
-                self.sleepWithHeartbeat(sleepSeconds)
+                sleepWithHeartbeat(sleepSeconds)
                 continue
 
             requestResponse.raise_for_status()
             return requestResponse
     
     
-    def sleepWithHeartbeat(totalSeconds, interval=30):
-        # Grab remaining seconds
-        remaining = totalSeconds
 
-        # Begin looping time printouts
-        while remaining > 0:
-            mins, secs = divmod(remaining, 60)
-            print(
-                f"\rRate limited — retrying in {mins:02d}:{secs:02d} ",
-                end="",
-                flush=True
-            )
-
-            sleepTime = min(interval, remaining)
-            time.sleep(sleepTime)
-            remaining -= sleepTime
-
-        print("\rRetrying now...            ")

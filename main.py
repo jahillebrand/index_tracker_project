@@ -7,11 +7,11 @@ apiKey = apiObj()
 
 # Open csv file, read in names
 csvFileName='symbolListFiles/vanguardAdmiralFunds.csv'
-jsonFileName="dataFiles/dummySymbolDataFile.json"
-pngFileName="exports/dummyPng.png"
+jsonFileName="dataFiles/apiRefactorTestSave.json"
+pngFileName="exports/apiRefactor.png"
 
 vanguardAdmFunds = listOfSymbols(csvFileName)
-vanguardAdmFunds.updateAllSymbols(apiKey,True)
+vanguardAdmFunds.updateAllSymbols(apiKey)
 vanguardAdmFunds.exportAllSymbolData(jsonFileName)
 
 

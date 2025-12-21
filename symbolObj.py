@@ -15,11 +15,13 @@ class symbolObj:
     tooManyRequests=429
     oneHourInSec=(60*60)
     
+    
     def __init__(self, symbol):
         self.symbol = symbol
         self.dateLastUpdated=""
         self.lastUpdatedAdjPrice=0.0
         self.tenYearReturn=0.0
+
 
     def updateTenYearWDummy(self):
         # Write dummy data out to the object based on passed symbol
@@ -30,6 +32,7 @@ class symbolObj:
             byteorder="big"
             )
         self.tenYearReturn = self.lastUpdatedAdjPrice * 10 #dummy value
+
 
     def updateTenYearWApi(self,apiObj):
         #Update new date
@@ -47,6 +50,7 @@ class symbolObj:
 
         # Use close price differences to calculate 10 year return
         self.tenYearReturn = symbolObj.tenThousandDollars*(self.lastUpdatedAdjPrice/tenYearAdjClose)
+
 
     def sendRequest(self, requestDate, apiObj):
         # Prepare Header Data
@@ -87,6 +91,7 @@ class symbolObj:
 
             requestResponse.raise_for_status()
             return requestResponse
+    
     
     def sleepWithHeartbeat(totalSeconds, interval=30):
         # Grab remaining seconds

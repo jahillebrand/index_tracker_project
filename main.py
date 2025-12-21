@@ -40,13 +40,11 @@ csvFileName='symbolsList.csv'
     for lines in csvFileHandler:
         csvFileContents = csvFileContents+lines """
 
-## Left off here
+
 
 vanguardAdmFunds = listOfSymbols(csvFileName)
 vanguardAdmFunds.updateAllSymbols(apiKey,True)
-print(vanguardAdmFunds.symbolNamesList)
-for symbolObj in vanguardAdmFunds.symbolObjList:
-    print(symbolObj.lastUpdatedAdjPrice)
+vanguardAdmFunds.exportAllSymbolData("dummySymbolDataFile.json")
 
 """ # Drop symbols to all lowercase
 for line in range(len(csvFileContents)):

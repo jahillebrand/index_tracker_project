@@ -1,5 +1,5 @@
 #Import apiObj to process API keys
-import apiObj
+import api.apiObj as apiObj
 
 # Import Datetime module for grabbing dates
 from datetime import datetime, timedelta

@@ -2,7 +2,7 @@
 import csv
 import json
 # Import symbolObj to handle symbolObjects
-from symbolObj import symbolObj
+from .symbolObj import symbolObj
 
 # Function to append new data to JSON file
 import json

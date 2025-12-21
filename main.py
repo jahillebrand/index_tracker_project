@@ -24,7 +24,7 @@ def write_json(new_data, filename='symbolDataFile.json'):
 
 # Example instantiation
 # Create API key and Vanguard Information Technology ETF object
-#apiKey = apiObj()
+apiKey = apiObj()
 #vgtObj = symbolObj("vgt",apiKey)
 
 # Print Results
@@ -43,7 +43,10 @@ csvFileName='symbolsList.csv'
 ## Left off here
 
 vanguardAdmFunds = listOfSymbols(csvFileName)
+vanguardAdmFunds.updateAllSymbols(apiKey,True)
 print(vanguardAdmFunds.symbolNamesList)
+for symbolObj in vanguardAdmFunds.symbolObjList:
+    print(symbolObj.lastUpdatedAdjPrice)
 
 """ # Drop symbols to all lowercase
 for line in range(len(csvFileContents)):

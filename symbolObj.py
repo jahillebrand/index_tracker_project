@@ -15,22 +15,30 @@ class symbolObj:
     tooManyRequests=429
     oneHourInSec=(60*60)
     
-    def __init__(self, symbol, apiObj):
+    def __init__(self, symbol):
         self.symbol = symbol
         self.dateLastUpdated=""
         self.lastUpdatedAdjPrice=0.0
         self.tenYearReturn=0.0
-        self.apiObj = apiObj
-        #self.updateTenYear()
 
-    def updateTenYear(self):
+    def updateTenYearWDummy(self):
+        # Write dummy data out to the object based on passed symbol
+        # <Used for testing only>
+        self.dateLastUpdated = datetime.now().date()
+        self.lastUpdatedAdjPrice = int.from_bytes(
+            self.symbol.encode("utf-8"), 
+            byteorder="big"
+            )
+        self.tenYearReturn = self.lastUpdatedAdjPrice * 10 #dummy value
+
+    def updateTenYearWApi(self,apiObj):
         #Update new date
         self.dateLastUpdated = datetime.now().date()
         priorMonthDate = self.dateLastUpdated - timedelta(days=30)
         tenYearPriorDate = priorMonthDate - timedelta(days=10*365)
 
         # Make API call for close price 1 month prior
-        priorMonthResponse=self.sendRequest(priorMonthDate)
+        priorMonthResponse=self.sendRequest(priorMonthDate,apiObj)
         self.lastUpdatedAdjPrice = float(priorMonthResponse.json()[0]["adjClose"])
 
         # Make API call for 10 years prior
@@ -40,11 +48,11 @@ class symbolObj:
         # Use close price differences to calculate 10 year return
         self.tenYearReturn = symbolObj.tenThousandDollars*(self.lastUpdatedAdjPrice/tenYearAdjClose)
 
-    def sendRequest(self, requestDate):
+    def sendRequest(self, requestDate, apiObj):
         # Prepare Header Data
         headers = {
             'Content-Type': 'application/json',
-            'Authorization': f'Token {self.apiObj.tiingApiKey}'
+            'Authorization': f'Token {apiObj.tiingApiKey}'
         }
 
         # Prepare params
@@ -59,7 +67,7 @@ class symbolObj:
         while True:
             # Query API
             requestResponse = requests.get(
-                f"{self.apiObj.dailyUriBase}{self.symbol}{self.apiObj.dailyUriSuffix}",
+                f"{apiObj.dailyUriBase}{self.symbol}{apiObj.dailyUriSuffix}",
                 params=query_parameters, 
                 headers=headers
             )
@@ -98,4 +106,3 @@ class symbolObj:
             remaining -= sleepTime
 
         print("\rRetrying now...            ")
-    

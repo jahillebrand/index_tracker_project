@@ -60,40 +60,58 @@ class symbolObj:
         priorMonthDate = self.dateLastUpdated - timedelta(days=30)
         tenYearPriorDate = priorMonthDate - timedelta(days=10*365)
 
+        # Prepare Header and Parameter Data
+        headers = {
+            'Content-Type': 'application/json',
+            'Authorization': f'Token {apiObj.tiingApiKey}'
+        }
+
+        # Prior Month Parameters
+        priorMonthQueryParameters = {
+            "startDate": priorMonthDate,
+            "endDate": priorMonthDate,
+            "resampleFreq": "monthly",
+            "columns": "splitFactor,close,adjClose",
+        }
+
         # Make API call for close price 1 month prior
-        priorMonthResponse=self.sendRequest(priorMonthDate,apiObj)
+        priorMonthResponse=self.sendRequest(
+            headers,
+            priorMonthQueryParameters,
+            apiObj.dailyUriBase,
+            apiObj.dailyUriSuffix
+            )
         self.lastUpdatedAdjPrice = float(priorMonthResponse.json()[0]["adjClose"])
 
+        # Ten Year Parameters
+        tenYearQueryParameters = {
+            "startDate": tenYearPriorDate,
+            "endDate": priorMonthDate,
+            "resampleFreq": "monthly",
+            "columns": "splitFactor,close,adjClose",
+        }
+
         # Make API call for 10 years prior
-        tenYearResponse=self.sendRequest(tenYearPriorDate,apiObj)
+        tenYearResponse=self.sendRequest(
+            headers,
+            tenYearQueryParameters,
+            apiObj.dailyUriBase,
+            apiObj.dailyUriSuffix
+            )
         tenYearAdjClose=float(tenYearResponse.json()[0]["adjClose"])
 
         # Use close price differences to calculate 10 year return
         self.tenYearReturn = symbolObj.tenThousandDollars*(self.lastUpdatedAdjPrice/tenYearAdjClose)
 
 
-    def sendRequest(self, requestDate, apiObj):
-        # Prepare Header Data
-        headers = {
-            'Content-Type': 'application/json',
-            'Authorization': f'Token {apiObj.tiingApiKey}'
-        }
-
-        # Prepare params
-        query_parameters = {
-            "startDate": requestDate,
-            "endDate": requestDate,
-            "resampleFreq": "monthly",
-            "columns": "splitFactor,close,adjClose",
-        }
-
+    def sendRequest(self, requestHeaders, requestQueryParams, uriBase, uriSuffix):
         # Attempt API query, pause, sleep and loop if needed
         while True:
             # Query API
             requestResponse = requests.get(
-                f"{apiObj.dailyUriBase}{self.symbol}{apiObj.dailyUriSuffix}",
-                params=query_parameters, 
-                headers=headers
+                f"{uriBase}{self.symbol}{uriSuffix}",
+                params=requestQueryParams, 
+                headers=requestHeaders
             )
 
             # Check for Request Limit Exceeded

@@ -24,7 +24,7 @@ class storedSymbolObj:
         # Sort the list and copy it into self.sortedSymbolDataList, greatest return to least
         self.sortedSymbolDataList = sorted(
             self.symbolDataList,
-            key=lambda d: d['tenYearReturn'],
+            key=lambda d: d['tenYearTenKUsdReturn'],
             reverse=True
         )
 
@@ -47,7 +47,7 @@ class storedSymbolObj:
 
             # Format the 10-year return like real money:
             # dollar sign, commas, and two clean decimals
-            tenYearValue = rowDict["tenYearReturn"]
+            tenYearValue = rowDict["tenYearTenKUsdReturn"]
             formattedReturn = f"${float(tenYearValue):,.2f}"
 
             tableData.append([symbolValue, formattedReturn])

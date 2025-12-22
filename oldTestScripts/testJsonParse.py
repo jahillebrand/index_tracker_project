@@ -16,7 +16,7 @@ def makeTablePng(dataList, outputPath):
 
         # Format the 10-year return like real money:
         # dollar sign, commas, and two clean decimals
-        tenYearValue = rowDict["tenYearReturn"]
+        tenYearValue = rowDict["tenYearTenKUsdReturn"]
         formattedReturn = f"${float(tenYearValue):,.2f}"
 
         tableData.append([symbolValue, formattedReturn])
@@ -64,7 +64,7 @@ for line in testJsonData['symbolData']:
     tickerDataList.append(line)
 
 # Sort this list by 10 year returns, largest to smallest
-sortedTickerDataList=sorted(tickerDataList, key=lambda d: d['tenYearReturn'], reverse=True)
+sortedTickerDataList=sorted(tickerDataList, key=lambda d: d['tenYearTenKUsdReturn'], reverse=True)
 
 # Do something with this information
 print(sortedTickerDataList)
@@ -72,10 +72,10 @@ print(sortedTickerDataList)
 # Make a little png
 makeTablePng(
     dataList=sortedTickerDataList,
-    outputPath="tenYearReturn.png"
+    outputPath="tenYearTenKUsdReturn.png"
 ) """
 
 testDataFilename="symbolDataFile.json"
-outputFilename="testTenYearReturn.png"
+outputFilename="tenYearTenKUsdReturn.png"
 testDataObj=storedSymbolObj(testDataFilename)
 testDataObj.makeTablePng(outputFilename)

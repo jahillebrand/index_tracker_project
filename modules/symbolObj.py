@@ -37,10 +37,19 @@ class symbolObj:
     
     
     def __init__(self, symbol):
-        self.symbol = symbol
+        self.symbol=symbol
+        self.fundName=""
+        self.fundStartDate=""
+        self.fundEndDate=""
         self.dateLastUpdated=""
         self.lastUpdatedAdjPrice=0.0
-        self.tenYearReturn=0.0
+        self.lastUpdatedClosePrice=0.0
+        self.lastUpdatedSplitFactor=0.0
+        self.tenYearAdjPrice=0.0
+        self.tenYearClosePrice=0.0
+        self.tenYearSplitFactor=0.0
+        self.tenYearTenKUsdReturn=0.0
+        self.tenYearPctReturn=0.0
 
 
     def updateTenYearWDummy(self):
@@ -51,7 +60,10 @@ class symbolObj:
             self.symbol.encode("utf-8"), 
             byteorder="big"
             )
-        self.tenYearReturn = self.lastUpdatedAdjPrice * 10 #dummy value
+        self.tenYearTenKUsdReturn = self.lastUpdatedAdjPrice * 10 #dummy value
+        self.fundName = "AAAAAA"
+        self.fundStartDate = "2025-12-31"
+        self.fundEndDate = "2025-12-31"
 
 
     def updateTenYearWApi(self,apiObj):
@@ -82,6 +94,8 @@ class symbolObj:
             apiObj.dailyUriSuffix
             )
         self.lastUpdatedAdjPrice = float(priorMonthResponse.json()[0]["adjClose"])
+        self.lastUpdatedClosePrice = float(priorMonthResponse.json()[0]["close"])
+        self.lastUpdatedSplitFactor = float(priorMonthResponse.json()[0]["splitFactor"])
 
         # Ten Year Parameters
         tenYearQueryParameters = {
@@ -98,10 +112,39 @@ class symbolObj:
             apiObj.dailyUriBase,
             apiObj.dailyUriSuffix
             )
-        tenYearAdjClose=float(tenYearResponse.json()[0]["adjClose"])
+        self.tenYearAdjPrice = float(tenYearResponse.json()[0]["adjClose"])
+        self.tenYearClosePrice = float(tenYearResponse.json()[0]["close"])
+        self.tenYearSplitFactor = float(tenYearResponse.json()[0]["splitFactor"])
 
-        # Use close price differences to calculate 10 year return
-        self.tenYearReturn = symbolObj.tenThousandDollars*(self.lastUpdatedAdjPrice/tenYearAdjClose)
+        # Use close price differences to calculate 10 year return in usd and pct
+        # Divide by 0 protection
+        if self.tenYearAdjPrice is not 0.0:
+            priceRatio = self.lastUpdatedAdjPrice/self.tenYearAdjPrice
+        else:
+            priceRatio = 0.0
+        self.tenYearTenKUsdReturn = symbolObj.tenThousandDollars*priceRatio
+        self.tenYearPctReturn = (1-priceRatio)*100
+
+    def updateFundDetails(self,apiObj):
+        # Prepare Header and Parameter Data
+        headers = {
+            'Content-Type': 'application/json',
+            'Authorization': f'Token {apiObj.tiingApiKey}'
+        }
+
+        # Request fund metadata
+        metaRequest = self.sendRequest(headers,"",apiObj.dailyUriBase,"")
+
+        # Set fund metadata
+        self.fundName = metaRequest.json()['name']
+        self.fundStartDate = datetime.strptime(
+            metaRequest.json()['startDate'],
+            "%Y-%m-%d"
+            ).date()
+        self.fundStartDate = datetime.strptime(
+            metaRequest.json()['endDate'],
+            "%Y-%m-%d"
+            ).date()  
 
 
     def sendRequest(self, requestHeaders, requestQueryParams, uriBase, uriSuffix):

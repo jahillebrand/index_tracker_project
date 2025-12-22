@@ -11,11 +11,12 @@ jsonFileName="dataFiles/apiRefactorTestSave.json"
 pngFileName="exports/apiRefactor.png"
 
 vanguardAdmFunds = listOfSymbols(csvFileName)
-vanguardAdmFunds.updateAllSymbols(apiKey)
-vanguardAdmFunds.exportAllSymbolData(jsonFileName)
+vanguardAdmFunds.updateAllSymbols(apiObj,True)
+#vanguardAdmFunds.updateAllSymbols(apiKey)
+#vanguardAdmFunds.exportAllSymbolPriceData(jsonFileName)
 
 
-testDataObj=storedSymbolObj(jsonFileName)
-testDataObj.makeTablePng(pngFileName)
+#testDataObj=storedSymbolObj(jsonFileName)
+#testDataObj.makeTablePng(pngFileName)
 
 

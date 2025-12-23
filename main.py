@@ -1,5 +1,6 @@
 from api import apiObj
 from modules import listOfSymbols, storedSymbolObj
+from datetime import datetime
 
 # Calls all procedures to generate a report
 # include full relative path to file
@@ -7,6 +8,9 @@ from modules import listOfSymbols, storedSymbolObj
 
 # TODO: Haven't tested this guy yet, test him in 1 shot after re-writing chart object
 def callStockFetcher(inputCsvFilename):
+    # Get the date
+    todaysDate = str(datetime.now().date())
+
     # Create API key and Vanguard Information Technology ETF object
     apiKey = apiObj()
 
@@ -18,8 +22,8 @@ def callStockFetcher(inputCsvFilename):
 
     # Export Fund Data to Storage
     fileArray = inputCsvFilename.replace("/",".").split(".")
-    exportFilename = f"datafiles/{fileArray[1]}.json"
-    fundList.exportAllSymbolPriceData(exportFilename)
+    dataExportFilename = f"datafiles/{todaysDate}_{fileArray[1]}.json"
+    fundList.exportAllSymbolPriceData(dataExportFilename)
 
 
 
@@ -30,14 +34,14 @@ apiKey = apiObj()
 # Open csv file, read in names
 csvFileName='symbolListFiles/vanguardAdmiralFunds.csv'
 jsonFileName="dataFiles/newFullDatadump.json"
-pngFileName="exports/apiRefactor.png"
+pngFileName="exports/dataReworkChart.png"
 
-vanguardAdmFunds = listOfSymbols(csvFileName)
+""" vanguardAdmFunds = listOfSymbols(csvFileName)
 vanguardAdmFunds.updateAllSymbols(apiKey)
-vanguardAdmFunds.exportAllSymbolPriceData(jsonFileName)
+vanguardAdmFunds.exportAllSymbolPriceData(jsonFileName) """
 
 
-#testDataObj=storedSymbolObj(jsonFileName)
-#testDataObj.makeTablePng(pngFileName)
+testDataObj=storedSymbolObj(jsonFileName)
+testDataObj.makeTablePng()
 
 

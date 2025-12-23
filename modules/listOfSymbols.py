@@ -115,7 +115,10 @@ class listOfSymbols:
                 # Pack data for Json write
                 symbolDataToWrite = {
                     "symbol" : symbolObj.symbol,
-                    "dateLastupdated" : str(symbolObj.dateLastUpdated),
+                    "fundName" : symbolObj.fundName,
+                    "fundStartDate" : str(symbolObj.fundStartDate),
+                    "fundEndDate" : str(symbolObj.fundEndDate),
+                    "dateLastUpdated" : str(symbolObj.dateLastUpdated),
                     "lastUpdatedAdjPrice" : str(symbolObj.lastUpdatedAdjPrice),
                     "lastUpdatedClosePrice" : str(symbolObj.lastUpdatedClosePrice),
                     "lastUpdatedSplitFactor" : str(symbolObj.lastUpdatedSplitFactor),

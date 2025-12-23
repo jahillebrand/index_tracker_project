@@ -34,6 +34,8 @@ class symbolObj:
     tenThousandDollars=10000
     tooManyRequests=429
     oneHourInSec=(60*60)
+    tenYears=10
+    percentMultiplier=100
     
     
     def __init__(self, symbol):
@@ -45,11 +47,12 @@ class symbolObj:
         self.lastUpdatedAdjPrice=0.0
         self.lastUpdatedClosePrice=0.0
         self.lastUpdatedSplitFactor=0.0
+        self.tenYearDate=""
         self.tenYearAdjPrice=0.0
         self.tenYearClosePrice=0.0
         self.tenYearSplitFactor=0.0
         self.tenYearTenKUsdReturn=0.0
-        self.tenYearPctReturn=0.0
+        self.tenYearCagr=0.0
 
 
     def updateTenYearWDummy(self):
@@ -67,10 +70,12 @@ class symbolObj:
 
 
     def updateTenYearWApi(self,apiObj):
-        #Update new date
-        self.dateLastUpdated = datetime.now().date()
-        priorMonthDate = self.dateLastUpdated - timedelta(days=30)
-        tenYearPriorDate = priorMonthDate - timedelta(days=10*365)
+        # Get dates to use
+        #self.dateLastUpdated = datetime.now().date()
+        # Print out what we're doing
+        print(f"Now querying for {self.symbol}")
+        priorMonthDate = datetime.now().date() - timedelta(days=30)
+        tenYearPriorDate = priorMonthDate - timedelta(days=symbolObj.tenYears*365)
 
         # Prepare Header and Parameter Data
         headers = {
@@ -83,7 +88,7 @@ class symbolObj:
             "startDate": priorMonthDate,
             "endDate": priorMonthDate,
             "resampleFreq": "monthly",
-            "columns": "splitFactor,close,adjClose",
+            "columns": "date,splitFactor,close,adjClose",
         }
 
         # Make API call for close price 1 month prior
@@ -93,6 +98,11 @@ class symbolObj:
             apiObj.dailyUriBase,
             apiObj.dailyUriSuffix
             )
+        
+        # Pull received data and assign to object
+        self.dateLastUpdated = datetime.fromisoformat(
+            priorMonthResponse.json()[0]['date'].replace("Z", "+00:00")
+        ).date()
         self.lastUpdatedAdjPrice = float(priorMonthResponse.json()[0]["adjClose"])
         self.lastUpdatedClosePrice = float(priorMonthResponse.json()[0]["close"])
         self.lastUpdatedSplitFactor = float(priorMonthResponse.json()[0]["splitFactor"])
@@ -112,18 +122,24 @@ class symbolObj:
             apiObj.dailyUriBase,
             apiObj.dailyUriSuffix
             )
+        # Pull received data and assign to object      
+        self.tenYearDate = datetime.fromisoformat(
+            tenYearResponse.json()[0]['date'].replace("Z", "+00:00")
+        ).date()
         self.tenYearAdjPrice = float(tenYearResponse.json()[0]["adjClose"])
         self.tenYearClosePrice = float(tenYearResponse.json()[0]["close"])
         self.tenYearSplitFactor = float(tenYearResponse.json()[0]["splitFactor"])
 
         # Use close price differences to calculate 10 year return in usd and pct
         # Divide by 0 protection
-        if self.tenYearAdjPrice is not 0.0:
+        if self.tenYearAdjPrice != 0.0:
             priceRatio = self.lastUpdatedAdjPrice/self.tenYearAdjPrice
         else:
             priceRatio = 0.0
+        # 10 Year Return = $10,000 * (end Price / start price)
         self.tenYearTenKUsdReturn = symbolObj.tenThousandDollars*priceRatio
-        self.tenYearPctReturn = (1-priceRatio)*100
+        # 10 Year Cagr = (end price / start price) ^ (1 / period - years) - 1
+        self.tenYearCagr = (priceRatio ** (1/symbolObj.tenYears) - 1) * symbolObj.percentMultiplier
 
     def updateFundDetails(self,apiObj):
         # Prepare Header and Parameter Data
@@ -141,7 +157,7 @@ class symbolObj:
             metaRequest.json()['startDate'],
             "%Y-%m-%d"
             ).date()
-        self.fundStartDate = datetime.strptime(
+        self.fundEndDate = datetime.strptime(
             metaRequest.json()['endDate'],
             "%Y-%m-%d"
             ).date()  

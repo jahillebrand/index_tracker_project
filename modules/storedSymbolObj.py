@@ -33,8 +33,8 @@ class storedSymbolObj:
         )
 
 
-    # ChatGPT gave me this to make a png
-    def makeTablePng(self, outputPath=None):
+    # ChatGPT gave me this to make a pdf
+    def makeTablePdf(self, outputPath=None):
         # If no argument is given, output to same filename as given in constructor
         fileArray = self.filename.replace("/",".").split(".")
         tableExportFilename = f"exports/{fileArray[1]}.pdf"

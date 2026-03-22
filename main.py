@@ -28,9 +28,13 @@ def callStockFetcher(inputCsvFilename):
     testDataObj.makeTablePdf()
 
 
-# csvFileToProcess
-csvFileName='symbolListFiles/vanguardAdmiralFunds.csv'
-callStockFetcher(csvFileName)
+# csvFilesToProcess
+fund_list_1='symbolListFiles/vanguardAdmiralFunds.csv'
+fund_list_2='symbolListFiles/morningstarTopVanguardFunds2026.csv'
+
+fund_collections = [fund_list_1, fund_list_2]
+for fund_list in fund_collections:
+    callStockFetcher(fund_list)
 
 
 

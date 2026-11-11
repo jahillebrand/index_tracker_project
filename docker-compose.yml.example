@@ -1,0 +1,7 @@
+services:
+  monthly-scripts:
+    build: .
+    container_name: monthly-scripts
+    restart: unless-stopped
+    environment:
+      TZ: America/Chicago

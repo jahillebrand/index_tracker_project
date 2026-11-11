@@ -1,0 +1,2 @@
+
+0 2 1 * * cd /app && (python -u scripts/script1.py && python -u scripts/script2.py) >> /proc/1/fd/1 2>&1
